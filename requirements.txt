@@ -4,3 +4,4 @@ asyncio==3.4.3
 beautifulsoup4==4.12.2
 aiofiles==23.2.1
 aiogram==3.3.0
+python-dotenv==1.0.0

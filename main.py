@@ -10,6 +10,7 @@ from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 from utils.flibusta_crawler import Flibusta, Flibusta_Book
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.methods.edit_message_text import EditMessageText
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,7 +18,7 @@ load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 
 dp = Dispatcher()
-
+bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
@@ -43,6 +44,7 @@ async def echo_handler(message: types.Message) -> None:
         if "Поиск книги" in message.text:
             await message.answer("Для того чтобы найти книгу напиши ее название мне.")
         else:
+            mess = await message.reply("🔎 Секундочку, ищу")
             ff = Flibusta(9052, "127.0.0.1")
             if await ff.check_connection():
                 books = await ff.search_for_books(query=message.text)
@@ -60,9 +62,9 @@ async def echo_handler(message: types.Message) -> None:
                         "не могу найти запрошенную книгу. Прошу прощения."
                     )
                 else:
-                    await message.answer(
-                        "Найденные книги: ", reply_markup=builder.as_markup()
-                    )
+                    await bot(EditMessageText(chat_id=mess.chat.id,message_id=mess.message_id,
+                        text="Найденные книги: ", reply_markup=builder.as_markup()
+                    ))
             else:
                 await message.answer("Что-то не так")
     except TypeError:
@@ -70,7 +72,7 @@ async def echo_handler(message: types.Message) -> None:
 
 
 async def main() -> None:
-    bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
+    
     await dp.start_polling(bot)
 
 
