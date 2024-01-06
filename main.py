@@ -20,6 +20,10 @@ TOKEN = getenv("BOT_TOKEN")
 dp = Dispatcher()
 bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 
+class SelectedBook(StatesGroup):
+    selected_book = State()
+
+
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     kb = [
